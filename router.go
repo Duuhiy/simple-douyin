@@ -2,22 +2,31 @@ package main
 
 import (
 	"github.com/RaymondCode/simple-demo/controller"
+	"github.com/RaymondCode/simple-demo/middleware"
+	"github.com/RaymondCode/simple-demo/repository/mysql"
+	"github.com/RaymondCode/simple-demo/service"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-func initRouter(r *gin.Engine) {
+func initRouter(r *gin.Engine, db *gorm.DB) {
 	// public directory is used to serve static resources
 	r.Static("/static", "./public")
 
-	apiRouter := r.Group("/douyin")
+	ur := mysql.NewUUserRepository(db)
+	us := service.NewUserService(ur)
+	u := controller.NewUserController(us)
 
+	vs := service.NewVideoService(ur)
+	v := controller.NewVideoController(vs)
 	// basic apis
-	apiRouter.GET("/feed/", controller.Feed)
-	apiRouter.GET("/user/", controller.UserInfo)
-	apiRouter.POST("/user/register/", controller.Register)
-	apiRouter.POST("/user/login/", controller.Login)
-	apiRouter.POST("/publish/action/", controller.Publish)
-	apiRouter.GET("/publish/list/", controller.PublishList)
+	apiRouter := r.Group("/douyin")
+	apiRouter.GET("/feed/", v.Feed)
+	apiRouter.GET("/user/", middleware.Auth, u.UserInfo)
+	apiRouter.POST("/user/register/", u.Register)
+	apiRouter.POST("/user/login/", u.Login)
+	apiRouter.POST("/publish/action/", middleware.AuthPublish, v.Publish)
+	apiRouter.GET("/publish/list/", middleware.Auth, v.PublishList)
 
 	// extra apis - I
 	apiRouter.POST("/favorite/action/", controller.FavoriteAction)
