@@ -87,6 +87,7 @@ func (u *UserController) Login(c *gin.Context) {
 	password := c.Query("password")
 
 	userId, err := u.userService.Login(username, password)
+	//fmt.Println("Login", userId)
 	if err != nil {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},

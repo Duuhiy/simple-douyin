@@ -1,9 +1,23 @@
 package controller
 
 import (
+	"github.com/RaymondCode/simple-demo/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
+
+type ICommentController interface {
+	CommentAction(c *gin.Context)
+	CommentList(c *gin.Context)
+}
+
+type CommentController struct {
+	commentService service.ICommentService
+}
+
+func NewCommentController(service service.ICommentService) ICommentController {
+	return &CommentController{service}
+}
 
 type CommentListResponse struct {
 	Response
@@ -16,7 +30,7 @@ type CommentActionResponse struct {
 }
 
 // CommentAction no practical effect, just check if token is valid
-func CommentAction(c *gin.Context) {
+func (co *CommentController) CommentAction(c *gin.Context) {
 	token := c.Query("token")
 	actionType := c.Query("action_type")
 
@@ -39,7 +53,7 @@ func CommentAction(c *gin.Context) {
 }
 
 // CommentList all videos have same demo comment list
-func CommentList(c *gin.Context) {
+func (co *CommentController) CommentList(c *gin.Context) {
 	c.JSON(http.StatusOK, CommentListResponse{
 		Response:    Response{StatusCode: 0},
 		CommentList: DemoComments,

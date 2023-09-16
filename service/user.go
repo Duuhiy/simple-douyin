@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/repository/mysql"
 	"log"
@@ -26,6 +27,7 @@ func (u *UserService) User(id int64) (*model.User, error) {
 
 func (u *UserService) Login(username string, password string) (int64, error) {
 	user, err := u.UserRepository.FindOneByToken(username, password)
+	fmt.Println(user)
 	if err != nil {
 		return -1, err
 	}

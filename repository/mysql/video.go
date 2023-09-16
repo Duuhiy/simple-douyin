@@ -6,7 +6,7 @@ import (
 	oss "github.com/RaymondCode/simple-demo/utils"
 )
 
-func (u UserRepository) Publish(video *model.Video, author *model.User, data []byte) error {
+func (u *UserRepository) Publish(video *model.Video, author *model.User, data []byte) error {
 	//TODO implement me
 	tx := u.db.Begin()
 	uploadPath := video.Title + ".mp4"
@@ -28,47 +28,63 @@ func (u UserRepository) Publish(video *model.Video, author *model.User, data []b
 	return tx.Commit().Error
 }
 
-func (u UserRepository) VideoInsert(data *model.Video) error {
+func (u *UserRepository) VideoInsert(data *model.Video) error {
 	//TODO implement me
 	err := u.db.Create(data).Error
 	return err
 }
 
-func (u UserRepository) VideoFindOne(id int64) (*model.Video, error) {
+func (u *UserRepository) VideoFindOne(id int64) (*model.Video, error) {
 	//TODO implement me
 	var video model.Video
 	err := u.db.Where("id = ?", id).Find(&video).Error
 	return &video, err
 }
 
-func (u UserRepository) VideoFindOneByUser(name string, password string) (*model.Video, error) {
+func (u *UserRepository) VideoFindOneByUser(name string, password string) (*model.Video, error) {
 	//TODO implement me
 	var video model.Video
 	err := u.db.Where("name = ? and password = ?", name, password).Find(&video).Error
 	return &video, err
 }
 
-func (u UserRepository) VideoFindAll() ([]model.Video, error) {
+func (u *UserRepository) VideoFindAll() ([]model.Video, error) {
 	//TODO implement me
 	var videos []model.Video
 	err := u.db.Order("create_at desc").Find(&videos).Error
 	return videos, err
 }
 
-func (u UserRepository) FindAllByAuthor(userId int64) ([]model.Video, error) {
+func (u *UserRepository) FindAllByAuthor(userId int64) ([]model.Video, error) {
 	//TODO implement me
 	var videos []model.Video
-	err := u.db.Where("author=?", userId).Order("create_at desc").Find(&videos).Error
+	//log.Println(u.db.Where("author=?", userId).Order("create_at desc").Find(&videos).Debug())
+	err := u.db.Order("create_at desc").Where("author=?", userId).Find(&videos).Error
+	//fmt.Println(videos)
 	return videos, err
 }
 
-func (u UserRepository) VideoUpdate(data *model.Video) error {
+func (u *UserRepository) VideoFindByIdList(list string) ([]model.Video, error) {
+	//TODO implement me
+	var videos []model.Video
+	err := u.db.Where("id in ?", list).Order("create_at desc").Find(&videos).Error
+	return videos, err
+}
+
+func (u *UserRepository) VideoFindOneByVideo(id int64) (*model.Video, error) {
+	//TODO implement me
+	var video model.Video
+	err := u.db.Where("id = ?", id).Order("create_at desc").Find(&video).Error
+	return &video, err
+}
+
+func (u *UserRepository) VideoUpdate(data *model.Video) error {
 	//TODO implement me
 	err := u.db.Save(data).Error
 	return err
 }
 
-func (u UserRepository) VideoDelete(id int64) error {
+func (u *UserRepository) VideoDelete(id int64) error {
 	//TODO implement me
 	panic("implement me")
 }

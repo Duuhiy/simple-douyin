@@ -8,7 +8,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 type VideoListResponse struct {
@@ -60,16 +59,23 @@ func (u *VideoController) Publish(c *gin.Context) {
 
 // PublishList all users have same publish video list
 func (u *VideoController) PublishList(c *gin.Context) {
-	userIdStr := c.Query("user_id")
-	userId, err := strconv.ParseInt(userIdStr, 10, 64)
-	if err != nil {
-		c.JSON(http.StatusOK, VideoListResponse{
-			Response: Response{
-				StatusCode: 1,
-			},
-		})
-	}
-	videolist, err := u.videoService.PublishList(userId)
+	//userIdStr := c.Query("user_id")
+	//fmt.Println("Login", userIdStr)
+	//userId, err := strconv.ParseInt(userIdStr, 10, 64)
+	//fmt.Println(userId)
+	usernameAny, _ := c.Get("username")
+	passwordAny, _ := c.Get("password")
+	username := usernameAny.(string)
+	password := passwordAny.(string)
+	//fmt.Println(username, password)
+	//if err != nil {
+	//	c.JSON(http.StatusOK, VideoListResponse{
+	//		Response: Response{
+	//			StatusCode: 1,
+	//		},
+	//	})
+	//}
+	videolist, err := u.videoService.PublishList(username, password)
 	if err != nil {
 		c.JSON(http.StatusOK, VideoListResponse{
 			Response: Response{
