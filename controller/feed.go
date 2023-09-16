@@ -32,7 +32,14 @@ type FeedResponse struct {
 
 // Feed same demo video list for every request
 func (u *VideoController) Feed(c *gin.Context) {
-	videlList, err := u.videoService.Feed()
+	usernameAny, ok := c.Get("uasername")
+	var username string
+	if !ok {
+		username = ""
+	} else {
+		username = usernameAny.(string)
+	}
+	videlList, err := u.videoService.Feed(username)
 	fmt.Println(videlList)
 	if err != nil {
 		log.Println(err)
