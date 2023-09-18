@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	"gorm.io/gorm"
 )
@@ -30,18 +31,43 @@ type IUserRepository interface {
 	FavoriteUpdate(data *model.Favorite) error
 	FavoriteDelete(id int64) error
 	FavoriteAction(username, password string, videoId, actionType int64) error
+	VideoFindOneByVideo(id int64) (*model.Video, error)
 
-	CommentInsert(data *model.Comment) (sql.Result, error)
+	CommentInsert(data *model.Comment) error
 	CommentFindOne(id int64) (*model.Comment, error)
 	CommentFindByVideo(videoId int64) ([]model.Comment, error)
 	CommentFindByUserVideo(userId int64, videoId int64) (*model.Comment, error)
 	CommentUpdate(data *model.Comment) error
 	CommentDelete(id int64) error
-	VideoFindOneByVideo(id int64) (*model.Video, error)
+	CommentAdd(data *model.Comment) error
+	CommentRemove(id, videoId int64) error
+
+	RelationInsert(data *model.Relation) (*model.Relation, error)
+	RelationFindOne(id int64) (*model.Relation, error)
+	RelationFindOneByUserToUser(userId int64, toUserId int64) (*model.Relation, error)
+	RelationFindByUser(userId int64) ([]model.Relation, error)
+	RelationFindByToUser(toUserId int64) ([]model.Relation, error)
+	RelationUpdate(data *model.Relation) error
+	RelationDelete(id int64) error
+	RelationDeleteByUser(userId int64, toUserId int64) error
+	RelationAdd(user *model.User, user2 *model.User, follow *model.Relation) error
+	RelationRemove(user *model.User, user2 *model.User) error
+	UserFindByIdList(idList string) ([]model.User, error)
 }
 
 type UserRepository struct {
 	db *gorm.DB
+}
+
+func (u *UserRepository) UserFindByIdList(idList string) ([]model.User, error) {
+	//TODO implement me
+	var users []model.User
+	q := fmt.Sprintf("select * from %s where id in %s", "user", idList)
+	//fmt.Println(q)
+	err := u.db.Raw(q).Scan(&users).Error
+	//err := u.db.Where("id in ?", idList).Find(&users).Error
+	//fmt.Println(users)
+	return users, err
 }
 
 func (u *UserRepository) Insert(data *model.User) (*model.User, error) {
@@ -60,7 +86,8 @@ func (u *UserRepository) FindOne(id int64) (*model.User, error) {
 func (u *UserRepository) FindOneByToken(name string, password string) (*model.User, error) {
 	//TODO implement me
 	var user model.User
-	err := u.db.Scopes().Where("name=? and password=?", name, password).Find(&user).Error
+	err := u.db.Where("name=? and password=?", name, password).Find(&user).Error
+	//fmt.Println(user)
 	return &user, err
 }
 
