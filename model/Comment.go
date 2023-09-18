@@ -12,3 +12,10 @@ type Comment struct {
 	CreateAt time.Time `db:"create_at" gorm:"autoCreateTime"`
 	UpdateAt time.Time `db:"update_at" gorm:"autoCreateTime"`
 }
+
+type CommentResp struct {
+	Id         int64  `json:"id"`
+	User       User   `json:"user"`
+	Content    string `json:"content"`
+	CreateDate string `json:"create_date"`
+}

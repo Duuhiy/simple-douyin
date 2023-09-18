@@ -47,7 +47,7 @@ type UserLoginResponse struct {
 
 type UserResponse struct {
 	Response
-	User model.User `json:"user"`
+	User model.UserResp `json:"user"`
 }
 
 type UserRegisterResponse struct {
@@ -85,7 +85,7 @@ func (u *UserController) Register(c *gin.Context) {
 func (u *UserController) Login(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
-
+	//fmt.Println(username, password)
 	userId, err := u.userService.Login(username, password)
 	//fmt.Println("Login", userId)
 	if err != nil {

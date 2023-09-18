@@ -2,12 +2,26 @@ package controller
 
 import (
 	"fmt"
+	"github.com/RaymondCode/simple-demo/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 	"sync/atomic"
 	"time"
 )
+
+type IMessageController interface {
+	MessageAction(c *gin.Context)
+	MessageChat(c *gin.Context)
+}
+
+type MessageController struct {
+	message service.IMessageService
+}
+
+func NewRMessageController(message service.IMessageService) IMessageController {
+	return &MessageController{message}
+}
 
 var tempChat = map[string][]Message{}
 
@@ -19,7 +33,7 @@ type ChatResponse struct {
 }
 
 // MessageAction no practical effect, just check if token is valid
-func MessageAction(c *gin.Context) {
+func (m *MessageController) MessageAction(c *gin.Context) {
 	token := c.Query("token")
 	toUserId := c.Query("to_user_id")
 	content := c.Query("content")
@@ -47,7 +61,7 @@ func MessageAction(c *gin.Context) {
 }
 
 // MessageChat all users have same follow list
-func MessageChat(c *gin.Context) {
+func (m *MessageController) MessageChat(c *gin.Context) {
 	token := c.Query("token")
 	toUserId := c.Query("to_user_id")
 

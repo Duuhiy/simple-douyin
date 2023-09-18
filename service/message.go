@@ -1,16 +1,23 @@
 package service
 
-//import (
-//	"encoding/json"
-//	"fmt"
-//	"github.com/RaymondCode/simple-demo/controller"
+import (
+	"github.com/RaymondCode/simple-demo/repository/mysql"
+	"github.com/RaymondCode/simple-demo/repository/redis"
+)
+
 //
-//	//"github.com/RaymondCode/simple-demo/controller"
-//	"io"
-//	"net"
-//	"sync"
-//)
-//
+type IMessageService interface {
+}
+
+type MessageService struct {
+	db  mysql.IUserRepository
+	rdb redis.IRedis
+}
+
+func NewMessageService(db mysql.IUserRepository, rdb redis.IRedis) IMessageService {
+	return &MessageService{}
+}
+
 //var chatConnMap = sync.Map{}
 //
 //func RunMessageServer() {

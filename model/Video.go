@@ -17,12 +17,12 @@ type Video struct {
 }
 
 type VideoResp struct {
-	Id            int64  `json:"id"`
-	Author        User   `json:"author"`          // The author
-	PlayUrl       string `json:"play_url"`        // The play_url
-	CoverUrl      string `json:"cover_url"`       // The cover_url
-	Title         string `json:"title"`           // The title
-	FavoriteCount int64  `json:"favorite_count" ` // The favorite_count
-	CommentCount  int64  `json:"comment_count" `  // The comment_count
-	IsFavorite    bool   `json:"is_favorite"`
+	Id            int64    `json:"id"`
+	Author        UserResp `json:"author"`          // The author
+	PlayUrl       string   `json:"play_url"`        // The play_url
+	CoverUrl      string   `json:"cover_url"`       // The cover_url
+	Title         string   `json:"title"`           // The title
+	FavoriteCount int64    `json:"favorite_count" ` // The favorite_count
+	CommentCount  int64    `json:"comment_count" `  // The comment_count
+	IsFavorite    bool     `json:"is_favorite"`
 }

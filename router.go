@@ -35,7 +35,7 @@ func initRouter(r *gin.Engine, db *gorm.DB, red *gredis.Client) {
 	// extra apis - I
 	fs := service.NewFavoriteService(ur, rdb)
 	f := controller.NewFavoriteController(fs)
-	cs := service.NewCommentService(ur)
+	cs := service.NewCommentService(ur, rdb)
 	co := controller.NewCommentController(cs)
 	apiRouter.POST("/favorite/action/", middleware.Auth, f.FavoriteAction)
 	apiRouter.GET("/favorite/list/", middleware.Auth, f.FavoriteList)
@@ -43,10 +43,15 @@ func initRouter(r *gin.Engine, db *gorm.DB, red *gredis.Client) {
 	apiRouter.GET("/comment/list/", middleware.Auth, co.CommentList)
 
 	// extra apis - II
-	apiRouter.POST("/relation/action/", controller.RelationAction)
-	apiRouter.GET("/relation/follow/list/", controller.FollowList)
-	apiRouter.GET("/relation/follower/list/", controller.FollowerList)
-	apiRouter.GET("/relation/friend/list/", controller.FriendList)
-	apiRouter.GET("/message/chat/", controller.MessageChat)
-	apiRouter.POST("/message/action/", controller.MessageAction)
+	rs := service.NewRelationService(ur, rdb)
+	rc := controller.NewRelationController(rs)
+	apiRouter.POST("/relation/action/", middleware.Auth, rc.RelationAction)
+	apiRouter.GET("/relation/follow/list/", middleware.Auth, rc.FollowList)
+	apiRouter.GET("/relation/follower/list/", middleware.Auth, rc.FollowerList)
+	apiRouter.GET("/relation/friend/list/", middleware.Auth, rc.FriendList)
+
+	ms := service.NewMessageService(ur, rdb)
+	m := controller.NewRMessageController(ms)
+	apiRouter.GET("/message/chat/", m.MessageChat)
+	apiRouter.POST("/message/action/", m.MessageAction)
 }

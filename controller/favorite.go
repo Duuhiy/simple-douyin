@@ -49,12 +49,6 @@ func (f *FavoriteController) FavoriteAction(c *gin.Context) {
 
 // FavoriteList all users have same favorite video list
 func (f *FavoriteController) FavoriteList(c *gin.Context) {
-	//userIdStr := c.Query("user_id")
-	//userId, err := strconv.ParseInt(userIdStr, 10, 64)
-	//if err != nil {
-	//	log.Println("userId 格式错误", err)
-	//	c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "userId 格式错误"})
-	//}
 	usernameAny, _ := c.Get("username")
 	passwordAny, _ := c.Get("password")
 	username := usernameAny.(string)

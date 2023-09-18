@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	oss "github.com/RaymondCode/simple-demo/utils"
 )
@@ -67,7 +68,8 @@ func (u *UserRepository) FindAllByAuthor(userId int64) ([]model.Video, error) {
 func (u *UserRepository) VideoFindByIdList(list string) ([]model.Video, error) {
 	//TODO implement me
 	var videos []model.Video
-	err := u.db.Where("id in ?", list).Order("create_at desc").Find(&videos).Error
+	q := fmt.Sprintf("select * from %s where id in %s", "video", list)
+	err := u.db.Raw(q).Scan(&videos).Error
 	return videos, err
 }
 
