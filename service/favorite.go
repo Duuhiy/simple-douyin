@@ -52,9 +52,23 @@ func (f FavoriteService) FavoriteList(username, password string) ([]model.VideoR
 			return nil, err
 		}
 		author, _ := f.FavoriteRepository.FindOne(video.Author)
+		isFollow := f.FavotiteRedis.IsExist(user.Id, author.Id, "follow:")
+		userResp := model.UserResp{
+			Id:              author.Id,
+			Name:            author.Name,
+			FollowCount:     author.FollowCount,
+			FollowerCount:   author.FollowerCount,
+			IsFollow:        isFollow, // 从redis的follow表中查询
+			Avatar:          author.Avatar,
+			BackgroundImage: author.BackgroundImage,
+			Signature:       author.Signature,
+			TotalFavorited:  author.TotalFavorited,
+			WorkCount:       author.WorkCount,
+			FavoriteCount:   author.FavoriteCount,
+		}
 		videoResp := model.VideoResp{
 			Id:            video.Id,
-			Author:        *author,
+			Author:        userResp,
 			PlayUrl:       video.PlayUrl,
 			CoverUrl:      video.CoverUrl,
 			Title:         video.Title,
@@ -76,9 +90,23 @@ func (f FavoriteService) FavoriteList(username, password string) ([]model.VideoR
 		}
 		for _, video := range videoList {
 			author, _ := f.FavoriteRepository.FindOne(video.Author)
+			isFollow := f.FavotiteRedis.IsExist(user.Id, author.Id, "follow:")
+			userResp := model.UserResp{
+				Id:              author.Id,
+				Name:            author.Name,
+				FollowCount:     author.FollowCount,
+				FollowerCount:   author.FollowerCount,
+				IsFollow:        isFollow, // 从redis的follow表中查询
+				Avatar:          author.Avatar,
+				BackgroundImage: author.BackgroundImage,
+				Signature:       author.Signature,
+				TotalFavorited:  author.TotalFavorited,
+				WorkCount:       author.WorkCount,
+				FavoriteCount:   author.FavoriteCount,
+			}
 			videoResp := model.VideoResp{
 				Id:            video.Id,
-				Author:        *author,
+				Author:        userResp,
 				PlayUrl:       video.PlayUrl,
 				CoverUrl:      video.CoverUrl,
 				Title:         video.Title,

@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/service"
+	"github.com/RaymondCode/simple-demo/utils"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -32,15 +32,18 @@ type FeedResponse struct {
 
 // Feed same demo video list for every request
 func (u *VideoController) Feed(c *gin.Context) {
-	usernameAny, ok := c.Get("uasername")
-	var username string
-	if !ok {
-		username = ""
-	} else {
-		username = usernameAny.(string)
+	token := c.Query("token")
+	var username, password string
+	if token != "" {
+		mc, err := utils.ParseToken(token)
+		if err != nil {
+			log.Println("鉴权出错", err)
+			c.JSON(http.StatusUnauthorized, Response{1, "鉴权出错"})
+		}
+		username, password = mc.Username, mc.Password
 	}
-	videlList, err := u.videoService.Feed(username)
-	fmt.Println(videlList)
+	videlList, err := u.videoService.Feed(username, password)
+	//fmt.Println(videlList)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusOK, FeedResponse{
