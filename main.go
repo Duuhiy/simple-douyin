@@ -19,7 +19,7 @@ func main() {
 	dsn := "root:123456@tcp(127.0.0.1:3306)/douyin?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(gmysql.Open(dsn), &gorm.Config{NamingStrategy: schema.NamingStrategy{
 		SingularTable: true,
-		NameReplacer:  strings.NewReplacer("user", "User", "video", "Video", "favorite", "Favorite", "comment", "Comment"),
+		NameReplacer:  strings.NewReplacer("user", "User", "video", "Video", "favorite", "Favorite", "comment", "Comment", "message", "Message"),
 	}})
 	if err != nil {
 		log.Println("连接 db 出错了")

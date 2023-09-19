@@ -52,6 +52,6 @@ func initRouter(r *gin.Engine, db *gorm.DB, red *gredis.Client) {
 
 	ms := service.NewMessageService(ur, rdb)
 	m := controller.NewRMessageController(ms)
-	apiRouter.GET("/message/chat/", m.MessageChat)
-	apiRouter.POST("/message/action/", m.MessageAction)
+	apiRouter.GET("/message/chat/", middleware.Auth, m.MessageChat)
+	apiRouter.POST("/message/action/", middleware.Auth, m.MessageAction)
 }

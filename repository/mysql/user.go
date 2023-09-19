@@ -53,6 +53,12 @@ type IUserRepository interface {
 	RelationAdd(user *model.User, user2 *model.User, follow *model.Relation) error
 	RelationRemove(user *model.User, user2 *model.User) error
 	UserFindByIdList(idList string) ([]model.User, error)
+
+	MessageInsert(data *model.Message) error
+	MessageFindOne(id int64) (*model.Message, error)
+	MessageFindByUserToUser(userId int64, toUserId int64) ([]model.Message, error)
+	MessageUpdate(data *model.Message) error
+	MessageDelete(id int64) error
 }
 
 type UserRepository struct {
@@ -88,6 +94,7 @@ func (u *UserRepository) FindOneByToken(name string, password string) (*model.Us
 	var user model.User
 	err := u.db.Where("name=? and password=?", name, password).Find(&user).Error
 	//fmt.Println(user)
+	//log.Println(err)
 	return &user, err
 }
 

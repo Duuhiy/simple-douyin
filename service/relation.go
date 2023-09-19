@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/repository/mysql"
 	"github.com/RaymondCode/simple-demo/repository/redis"
@@ -35,7 +34,7 @@ func (r *RelationService) FollowList(username string, password, relationType str
 		log.Println("FollowList service 出错了", err)
 		return nil, err
 	}
-	fmt.Println(userList)
+	//fmt.Println(userList)
 	if len(userList) == 0 {
 		return nil, nil
 	}

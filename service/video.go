@@ -35,7 +35,7 @@ func (v VideoService) Feed(username, password string) ([]model.VideoResp, error)
 		author, _ := v.videoRepository.FindOne(video.Author)
 		//fmt.Println("Feed service: ", author)
 		isFollow := v.videoRedis.IsExist(user.Id, author.Id, "follow:")
-		//fmt.Println(isFollow)
+		//fmt.Println(video.Title, isFollow)
 		userResp := model.UserResp{
 			Id:              author.Id,
 			Name:            author.Name,
@@ -66,7 +66,8 @@ func (v VideoService) Feed(username, password string) ([]model.VideoResp, error)
 		// 根据username查找redis中存不存在videoid
 		key := "favorite:" + username + ":" + strconv.FormatInt(video.Id, 10)
 		if v.videoRedis.Exist(key) {
-			log.Println("videoResp.IsFavorite = true")
+			//log.Println("videoResp.IsFavorite = true")
+			log.Println(video.Title, videoResp.IsFavorite)
 			videoResp.IsFavorite = true
 		}
 		videoListResp = append(videoListResp, videoResp)
@@ -87,7 +88,7 @@ func (v VideoService) PublishList(username, password string) ([]model.VideoResp,
 			Name:            author.Name,
 			FollowCount:     author.FollowCount,
 			FollowerCount:   author.FollowerCount,
-			IsFollow:        true, // 从redis的follow表中查询
+			IsFollow:        false, // 从redis的follow表中查询
 			Avatar:          author.Avatar,
 			BackgroundImage: author.BackgroundImage,
 			Signature:       author.Signature,
@@ -103,7 +104,7 @@ func (v VideoService) PublishList(username, password string) ([]model.VideoResp,
 			Title:         video.Title,
 			CommentCount:  video.CommentCount,
 			FavoriteCount: video.FavoriteCount,
-			//IsFavorite:    true,
+			IsFavorite:    false,
 		}
 		videoListResp = append(videoListResp, videoResp)
 	}

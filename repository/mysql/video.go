@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	oss "github.com/RaymondCode/simple-demo/utils"
+	"log"
 )
 
 func (u *UserRepository) Publish(video *model.Video, author *model.User, data []byte) error {
@@ -15,16 +16,21 @@ func (u *UserRepository) Publish(video *model.Video, author *model.User, data []
 	video.CoverUrl = "https://douyin-duu.oss-cn-beijing.aliyuncs.com/" + uploadPath + "?x-oss-process=video/snapshot,t_0,f_jpg,w_800,h_600"
 	// 插入video
 	if err := tx.Create(video).Error; err != nil {
+		log.Println("插入video表出错了", err)
 		tx.Rollback()
+		return err
 	}
 	// 修改作者的work_count
 	if err := tx.Save(author).Error; err != nil {
+		log.Println("修改作者的work_count出错了", err)
 		tx.Rollback()
+		return err
 	}
 	// 上传到oss
-
 	if err := oss.Bucket.PutObject(uploadPath, bytes.NewReader(data)); err != nil {
+		log.Println("上传到oss出错了", err)
 		tx.Rollback()
+		return err
 	}
 	return tx.Commit().Error
 }

@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/service"
 	"github.com/gin-gonic/gin"
@@ -76,7 +75,7 @@ func (r *RelationController) FollowList(c *gin.Context) {
 func (r *RelationController) FollowerList(c *gin.Context) {
 	username, _ := c.Get("username")
 	password, _ := c.Get("password")
-	fmt.Println("FollowerList")
+	//fmt.Println("FollowerList")
 	userList, err := r.relation.FollowList(username.(string), password.(string), "follower:")
 	if err != nil {
 		c.JSON(http.StatusOK, UserListResponse{
