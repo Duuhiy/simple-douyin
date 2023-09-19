@@ -2,12 +2,12 @@ package controller
 
 import (
 	"fmt"
+	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/service"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"strconv"
-	"sync/atomic"
-	"time"
 )
 
 type IMessageController interface {
@@ -29,50 +29,69 @@ var messageIdSequence = int64(1)
 
 type ChatResponse struct {
 	Response
-	MessageList []Message `json:"message_list"`
+	MessageList []model.MessageResp `json:"message_list"`
 }
 
 // MessageAction no practical effect, just check if token is valid
 func (m *MessageController) MessageAction(c *gin.Context) {
-	token := c.Query("token")
-	toUserId := c.Query("to_user_id")
+	toUserIdStr := c.Query("to_user_id")
 	content := c.Query("content")
-
-	if user, exist := usersLoginInfo[token]; exist {
-		userIdB, _ := strconv.Atoi(toUserId)
-		chatKey := genChatKey(user.Id, int64(userIdB))
-
-		atomic.AddInt64(&messageIdSequence, 1)
-		curMessage := Message{
-			Id:         messageIdSequence,
-			Content:    content,
-			CreateTime: time.Now().Format(time.Kitchen),
-		}
-
-		if messages, exist := tempChat[chatKey]; exist {
-			tempChat[chatKey] = append(messages, curMessage)
-		} else {
-			tempChat[chatKey] = []Message{curMessage}
-		}
-		c.JSON(http.StatusOK, Response{StatusCode: 0})
+	username, _ := c.Get("username")
+	password, _ := c.Get("password")
+	toUserId, err := strconv.ParseInt(toUserIdStr, 10, 64)
+	if err != nil {
+		log.Println("toUserId 格式错误", err)
+		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "toUserId 格式错误"})
+	}
+	err = m.message.MessageAction(username.(string), password.(string), content, toUserId)
+	if err != nil {
+		c.JSON(http.StatusOK, Response{StatusCode: 1})
 	} else {
-		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+		c.JSON(http.StatusOK, Response{StatusCode: 0})
 	}
 }
 
 // MessageChat all users have same follow list
 func (m *MessageController) MessageChat(c *gin.Context) {
-	token := c.Query("token")
-	toUserId := c.Query("to_user_id")
-
-	if user, exist := usersLoginInfo[token]; exist {
-		userIdB, _ := strconv.Atoi(toUserId)
-		chatKey := genChatKey(user.Id, int64(userIdB))
-
-		c.JSON(http.StatusOK, ChatResponse{Response: Response{StatusCode: 0}, MessageList: tempChat[chatKey]})
-	} else {
-		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+	toUserIdStr := c.Query("to_user_id")
+	preMsgTimeStr := c.Query("pre_msg_time")
+	username, _ := c.Get("username")
+	password, _ := c.Get("password")
+	//fmt.Println(username, password)
+	toUserId, err := strconv.ParseInt(toUserIdStr, 10, 64)
+	if err != nil {
+		log.Println("toUserId 格式错误", err)
+		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "toUserId 格式错误"})
 	}
+	preMsgTime, _ := strconv.ParseInt(preMsgTimeStr, 10, 64)
+	msgs, err := m.message.MessageChat(username.(string), password.(string), toUserId)
+	if err != nil {
+		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "MessageAction 出错了"})
+	} else {
+		// 1.preMsgTime = 0，获取全部聊天记录
+		if preMsgTime == 0 {
+			c.JSON(http.StatusOK, ChatResponse{Response: Response{StatusCode: 0}, MessageList: msgs})
+		} else if preMsgTime == msgs[len(msgs)-1].CreateTime || msgs[len(msgs)-1].ToUserId == toUserId {
+			c.JSON(http.StatusOK, ChatResponse{Response: Response{StatusCode: 0}})
+		} else {
+			i := len(msgs) - 1
+			for ; i > 0; i-- {
+				if msgs[i].CreateTime == preMsgTime {
+					break
+				}
+			}
+			c.JSON(http.StatusOK, ChatResponse{Response: Response{StatusCode: 0}, MessageList: msgs[i+1:]})
+		}
+		// 2.已经获取过所有聊天记录了，追加
+		// 3.正在聊天且最新的一条消息是我发的，不追加
+	}
+
+	//else if preMsgTime == msgs[len(msgs)-1].CreateTime || (preMsgTime != 0 && msgs[len(msgs) - 1].ToUserId == toUserId){
+	//	//fmt.Println("MessageChat", msgs)
+	//	c.JSON(http.StatusOK, ChatResponse{Response: Response{StatusCode: 0}})
+	//} else {
+	//	c.JSON(http.StatusOK, ChatResponse{Response: Response{StatusCode: 0}, MessageList: msgs})
+	//}
 }
 
 func genChatKey(userIdA int64, userIdB int64) string {

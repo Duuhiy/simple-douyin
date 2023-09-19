@@ -1,12 +1,17 @@
 package service
 
 import (
+	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/repository/mysql"
 	"github.com/RaymondCode/simple-demo/repository/redis"
+	"log"
+	"time"
 )
 
 //
 type IMessageService interface {
+	MessageAction(username, password, content string, toUserId int64) error
+	MessageChat(username, password string, toUserId int64) ([]model.MessageResp, error)
 }
 
 type MessageService struct {
@@ -14,14 +19,65 @@ type MessageService struct {
 	rdb redis.IRedis
 }
 
+func (m *MessageService) MessageAction(username, password, content string, toUserId int64) error {
+	//TODO implement me
+	// 把消息插入数据库
+	user, _ := m.db.FindOneByToken(username, password)
+	message := model.Message{
+		ToUserId:   toUserId,
+		FromUserId: user.Id,
+		Content:    content,
+		CreateAt:   time.Now(),
+	}
+	err := m.db.MessageInsert(&message)
+	return err
+}
+
+func (m *MessageService) MessageChat(username, password string, toUserId int64) ([]model.MessageResp, error) {
+	//TODO implement me
+	//log.Println("MessageChat")
+	user, _ := m.db.FindOneByToken(username, password)
+	//fmt.Println(user)
+	msgs, err := m.db.MessageFindByUserToUser(user.Id, toUserId)
+	var msgResp []model.MessageResp
+	for _, msg := range msgs {
+		//fmt.Println(msg.CreateAt)
+		//createTime, err := strconv.ParseInt(msg.CreateAt.Format("2006-01-02 03:04:05"), 10, 64)
+		if err != nil {
+			log.Println("MessageChat", err)
+		}
+		msgr := model.MessageResp{
+			Id:         msg.Id,
+			ToUserId:   msg.ToUserId,
+			FromUserId: msg.FromUserId,
+			Content:    msg.Content,
+			CreateTime: msg.CreateAt.Unix(),
+		}
+		msgResp = append(msgResp, msgr)
+	}
+	//fmt.Println(msgResp[0].CreateTime)
+	return msgResp, err
+}
+
 func NewMessageService(db mysql.IUserRepository, rdb redis.IRedis) IMessageService {
-	return &MessageService{}
+	return &MessageService{db, rdb}
+}
+
+type MessageSendEvent struct {
+	UserId     int64  `json:"user_id,omitempty"`
+	ToUserId   int64  `json:"to_user_id,omitempty"`
+	MsgContent string `json:"msg_content,omitempty"`
+}
+
+type MessagePushEvent struct {
+	FromUserId int64  `json:"user_id,omitempty"`
+	MsgContent string `json:"msg_content,omitempty"`
 }
 
 //var chatConnMap = sync.Map{}
-//
+
 //func RunMessageServer() {
-//	listen, err := net.Listen("tcp", "127.0.0.1:9090")
+//	listen, err := net.Listen("tcp", "127.0.0.1:8888")
 //	if err != nil {
 //		fmt.Printf("Run message sever failed: %v\n", err)
 //		return
@@ -52,7 +108,7 @@ func NewMessageService(db mysql.IUserRepository, rdb redis.IRedis) IMessageServi
 //			continue
 //		}
 //
-//		//var event = controller.MessageSendEvent{}
+//		var event = MessageSendEvent{}
 //		_ = json.Unmarshal(buf[:n], &event)
 //		fmt.Printf("Receive Message：%+v\n", event)
 //
@@ -69,7 +125,7 @@ func NewMessageService(db mysql.IUserRepository, rdb redis.IRedis) IMessageServi
 //			continue
 //		}
 //
-//		pushEvent := controller.MessagePushEvent{
+//		pushEvent := MessagePushEvent{
 //			FromUserId: event.UserId,
 //			MsgContent: event.MsgContent,
 //		}
