@@ -24,3 +24,26 @@ test 目录下为不同场景的功能测试case，可用于验证功能实现�
 其中 common.go 中的 _serverAddr_ 为服务部署的地址，默认为本机地址，可以根据实际情况修改
 
 测试数据写在 demo_data.go 中，用于列表接口的 mock 测试
+
+表设计
+
+user表
+
+create index ind_name_password on user (name, password);
+
+video表
+
+create index ind_time on video (create_at);
+create index ind_author_favorite on video (author, favorite_count);
+create index ind_author_comment on video (author, comment_count);
+
+favorite
+
+create index ind_user_video on favorite (user_id, video_id, create_at);
+
+relation
+
+create index ind_to_from on relation (user_id, to_user_id);
+create index ind_from on relation (to_user_id);
+
+聊天消息直接操作redis，异步同步给mysql
