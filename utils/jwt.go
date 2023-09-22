@@ -26,8 +26,8 @@ func GenToken(username, password string) (string, error) {
 		password,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(
-				time.Duration(time.Hour)).Unix(), // 过期时间
-			Issuer: "bluebell", // 签发人
+				time.Duration(time.Hour * 24)).Unix(), // 过期时间
+			Issuer: "dyh", // 签发人
 		},
 	}
 	// 使用指定的签名方法创建签名对象

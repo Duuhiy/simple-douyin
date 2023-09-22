@@ -1,10 +1,12 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/service"
 	"github.com/RaymondCode/simple-demo/utils"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"log"
 	"net/http"
 	"strconv"
@@ -59,10 +61,13 @@ type UserRegisterResponse struct {
 func (u *UserController) Register(c *gin.Context) {
 	// 1.解析参数
 	username := c.Query("username")
-	password := c.Query("password")
-
+	rawpassword := c.Query("password")
+	password := utils.PwdEncode(rawpassword)
+	fmt.Println("Register controller", password)
 	userId, err := u.userService.Register(username, password)
-	if err != nil {
+	if userId <= 0 || err != nil {
+		//zap.L().Info(err.Error())
+		fmt.Println("Register controller", err)
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "User already exist"},
 		})
@@ -85,10 +90,17 @@ func (u *UserController) Register(c *gin.Context) {
 func (u *UserController) Login(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
+	if username == "" || password == "" {
+		zap.L().Debug("Login controller 用户名和密码不能为空")
+		c.JSON(http.StatusOK, UserLoginResponse{
+			Response: Response{StatusCode: 1, StatusMsg: "用户名和密码不能为空"},
+		})
+	}
+	//fmt.Println("Login controller", username, pwd)
 	//fmt.Println(username, password)
 	userId, err := u.userService.Login(username, password)
-	//fmt.Println("Login", userId)
-	if err != nil {
+	fmt.Println("Login", userId)
+	if userId <= 0 || err != nil {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
 		})

@@ -8,15 +8,16 @@ import (
 
 func main() {
 	// Using the default options
-	salt, encodedPwd := password.Encode("generic password", nil)
-	check := password.Verify("generic password", salt, encodedPwd, nil)
-	fmt.Println(check) // true
+	//salt, encodedPwd := password.Encode("123456", nil)
+	//check := password.Verify("1", salt, encodedPwd, nil)
+	//fmt.Println(check) // true
 
 	// Using custom options
 	options := &password.Options{10, 10000, 32, sha512.New}
-	salt, encodedPwd = password.Encode("generic password", options)
+	salt, encodedPwd := password.Encode("123456", options)
 	finalPwd := fmt.Sprintf("%s$%s", salt, encodedPwd)
-	fmt.Println(len(finalPwd))
-	check = password.Verify("generic password", salt, encodedPwd, options)
+	fmt.Println(len(finalPwd), finalPwd)
+	fmt.Println(salt)
+	check := password.Verify("123456", salt, encodedPwd, options)
 	fmt.Println(check) // true
 }

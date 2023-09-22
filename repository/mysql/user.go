@@ -10,7 +10,8 @@ import (
 type IUserRepository interface {
 	Insert(data *model.User) (*model.User, error)
 	FindOne(id int64) (*model.User, error)
-	FindOneByToken(name string, password string) (int64, error)
+	FindOneByName(name string) (string, int64, error)
+	FindOneByToken(name string) (int64, error)
 	Update(data *model.User) error
 	Delete(id int64) error
 
@@ -89,14 +90,26 @@ func (u *UserRepository) FindOne(id int64) (*model.User, error) {
 	return &user, err
 }
 
-func (u *UserRepository) FindOneByToken(name string, password string) (int64, error) {
+func (u *UserRepository) FindOneByName(name string) (string, int64, error) {
 	//TODO implement me
-	var userId int64 = -1
-	q := fmt.Sprintf("select id, password from %s where name = ? and password = ?", "user")
-	err := u.db.Raw(q, name, password).Scan(&userId).Error
-	//fmt.Println(user)
+	var user model.User
+	fmt.Println("FindOneByToken", name)
+	q := fmt.Sprintf("select id, password from %s where name = ?", "user")
+	err := u.db.Raw(q, name).Scan(&user).Error
+	fmt.Println("FindOneByToken", user.Id)
 	//log.Println(err)
-	return userId, err
+	return user.Password, user.Id, err
+}
+
+func (u *UserRepository) FindOneByToken(name string) (int64, error) {
+	//TODO implement me
+	var user model.User
+	fmt.Println("FindOneByToken", name)
+	q := fmt.Sprintf("select id from %s where name = ?", "user")
+	err := u.db.Raw(q, name).Scan(&user).Error
+	fmt.Println("FindOneByToken", user.Id)
+	//log.Println(err)
+	return user.Id, err
 }
 
 func (u *UserRepository) Update(data *model.User) error {

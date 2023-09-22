@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/repository/mysql"
 	"github.com/RaymondCode/simple-demo/utils"
@@ -39,10 +41,14 @@ func (u *UserService) User(id int64) (*model.UserResp, error) {
 }
 
 func (u *UserService) Login(username string, password string) (int64, error) {
-	pwd := utils.PwdEncode(password)
-	userId, err := u.UserRepository.FindOneByToken(username, pwd)
-	if err != nil {
-		return -1, err
+	pwd, userId, err := u.UserRepository.FindOneByName(username)
+	if userId <= 0 || err != nil {
+		fmt.Println("Login service 用户不存在")
+		return userId, err
+	}
+	if !utils.PwdCheck(password, pwd) {
+		fmt.Println("Login service 密码错误")
+		return userId, errors.New("密码错误")
 	}
 	//fmt.Println(user)
 	return userId, nil
@@ -58,10 +64,14 @@ func (u *UserService) Register(username, password string) (int64, error) {
 		Name:     username,
 		Password: password,
 	}
+	if userId, err := u.UserRepository.FindOneByToken(username); userId > 0 {
+		fmt.Println("Register service", userId)
+		return 0, err
+	}
 	user, err := u.UserRepository.Insert(user)
 	if err != nil {
 		log.Println("插入数据库出错", err)
-		return -1, err
+		return 0, err
 	}
 	return user.Id, nil
 }
