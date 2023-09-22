@@ -43,14 +43,15 @@ func (u *UserRepository) FavoriteDelete(id int64) error {
 }
 
 func (u *UserRepository) FavoriteAction(username, password string, videoId, actionType int64) error {
-	user, _ := u.FindOneByToken(username, password)
+	userId, _ := u.FindOneByToken(username)
+	user, _ := u.FindOne(userId)
 	video, _ := u.VideoFindOne(videoId)
 	var favorite model.Favorite
 	switch actionType {
 	case 1:
 		// 点赞
 		// 1.判断是否点过赞了
-		res, err := u.FavoriteFindOneByUserVideo(user.Id, videoId)
+		res, err := u.FavoriteFindOneByUserVideo(userId, videoId)
 		log.Println(favorite, err)
 		if *res != favorite {
 			// 点过赞了

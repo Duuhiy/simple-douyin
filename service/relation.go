@@ -21,7 +21,7 @@ type RelationService struct {
 
 func (r *RelationService) FollowList(username string, password, relationType string) ([]model.UserResp, error) {
 	//TODO implement me
-	userId, _ := r.db.FindOneByToken(username, password)
+	userId, _ := r.db.FindOneByToken(username)
 	//fmt.Println(user)
 	var userList []string
 	var err error
@@ -81,7 +81,7 @@ func (r *RelationService) FollowList(username string, password, relationType str
 
 func (r *RelationService) RelationAction(toUserId, actionType int64, username, password string) error {
 	//TODO implement me
-	userId, _ := r.db.FindOneByToken(username, password)
+	userId, _ := r.db.FindOneByToken(username)
 	user, _ := r.db.FindOne(userId)
 	toUser, _ := r.db.FindOne(toUserId)
 	switch actionType {

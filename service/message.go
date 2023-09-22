@@ -1,17 +1,19 @@
 package service
 
 import (
+	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/repository/mysql"
 	"github.com/RaymondCode/simple-demo/repository/redis"
-	"log"
+	"strconv"
+	"strings"
 	"time"
 )
 
 //
 type IMessageService interface {
 	MessageAction(username, password, content string, toUserId int64) error
-	MessageChat(username, password string, toUserId int64) ([]model.MessageResp, error)
+	MessageChat(username, password, preMsgTime string, toUserId int64) ([]model.MessageResp, error)
 }
 
 type MessageService struct {
@@ -22,38 +24,56 @@ type MessageService struct {
 func (m *MessageService) MessageAction(username, password, content string, toUserId int64) error {
 	//TODO implement me
 	// 把消息插入数据库
-	userId, _ := m.db.FindOneByToken(username, password)
-	message := model.Message{
-		ToUserId:   toUserId,
-		FromUserId: userId,
-		Content:    content,
-		CreateAt:   time.Now(),
+	userId, _ := m.db.FindOneByToken(username)
+	key := fmt.Sprintf("room:%d:%d", userId, toUserId)
+	value := fmt.Sprintf("%d$%s", userId, content)
+	err := m.rdb.ZAddMsm(key, value, time.Now().Unix())
+	if err == nil {
+		key = fmt.Sprintf("room:%d:%d", toUserId, userId)
+		err = m.rdb.ZAddMsm(key, value, time.Now().Unix())
 	}
-	err := m.db.MessageInsert(&message)
+	//message := model.Message{
+	//	ToUserId:   toUserId,
+	//	FromUserId: userId,
+	//	Content:    content,
+	//	CreateAt:   time.Now(),
+	//}
+	//err := m.db.MessageInsert(&message)
 	return err
 }
 
-func (m *MessageService) MessageChat(username, password string, toUserId int64) ([]model.MessageResp, error) {
+func (m *MessageService) MessageChat(username, password, preMsgTime string, toUserId int64) ([]model.MessageResp, error) {
 	//TODO implement me
 	//log.Println("MessageChat")
-	userId, _ := m.db.FindOneByToken(username, password)
+	userId, _ := m.db.FindOneByToken(username)
 	//fmt.Println(user)
-	msgs, err := m.db.MessageFindByUserToUser(userId, toUserId)
+	key := fmt.Sprintf("room:%d:%d", userId, toUserId)
+	msgs, err := m.rdb.ZRangeByScore(key, preMsgTime)
+	//msgs, err := m.db.MessageFindByUserToUser(userId, toUserId)
 	var msgResp []model.MessageResp
 	for _, msg := range msgs {
-		//fmt.Println(msg.CreateAt)
+		fmt.Println(msg)
 		//createTime, err := strconv.ParseInt(msg.CreateAt.Format("2006-01-02 03:04:05"), 10, 64)
-		if err != nil {
-			log.Println("MessageChat", err)
-		}
+		//if err != nil {
+		//	log.Println("MessageChat", err)
+		//}
+		msgInfo := strings.Split(msg.Member.(string), "$")
+		fromId, _ := strconv.ParseInt(msgInfo[0], 10, 64)
+		createTime := int64(msg.Score)
 		msgr := model.MessageResp{
-			Id:         msg.Id,
-			ToUserId:   msg.ToUserId,
-			FromUserId: msg.FromUserId,
-			Content:    msg.Content,
-			CreateTime: msg.CreateAt.Unix(),
+			//Id:         msg.Id,
+			//ToUserId:   msg.ToUserId,
+			FromUserId: fromId,
+			Content:    msgInfo[1],
+			CreateTime: createTime,
+		}
+		if msgr.FromUserId == userId {
+			msgr.ToUserId = toUserId
+		} else {
+			msgr.ToUserId = userId
 		}
 		msgResp = append(msgResp, msgr)
+		fmt.Println("MessageChat", msgResp)
 	}
 	//fmt.Println(msgResp[0].CreateTime)
 	return msgResp, err

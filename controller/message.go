@@ -64,14 +64,14 @@ func (m *MessageController) MessageChat(c *gin.Context) {
 		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "toUserId 格式错误"})
 	}
 	preMsgTime, _ := strconv.ParseInt(preMsgTimeStr, 10, 64)
-	msgs, err := m.message.MessageChat(username.(string), password.(string), toUserId)
+	msgs, err := m.message.MessageChat(username.(string), password.(string), preMsgTimeStr, toUserId)
 	if err != nil {
 		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "MessageAction 出错了"})
 	} else {
 		// 1.preMsgTime = 0，获取全部聊天记录
 		if preMsgTime == 0 {
 			c.JSON(http.StatusOK, ChatResponse{Response: Response{StatusCode: 0}, MessageList: msgs})
-		} else if preMsgTime == msgs[len(msgs)-1].CreateTime || msgs[len(msgs)-1].ToUserId == toUserId {
+		} else if len(msgs) == 0 {
 			c.JSON(http.StatusOK, ChatResponse{Response: Response{StatusCode: 0}})
 		} else {
 			i := len(msgs) - 1

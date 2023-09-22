@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"github.com/RaymondCode/simple-demo/controller"
 	"github.com/RaymondCode/simple-demo/utils"
 	"github.com/gin-gonic/gin"
@@ -15,6 +16,7 @@ func Auth(c *gin.Context) {
 		log.Println("鉴权出错", err)
 		c.JSON(http.StatusUnauthorized, controller.Response{1, "鉴权出错"})
 	}
+	fmt.Println("Auth", mc.Password)
 	c.Set("username", mc.Username)
 	c.Set("password", mc.Password)
 	c.Next()

@@ -8,9 +8,9 @@
   },
   "redis": {
     "host": "192.168.245.129",
-    "port": 6379,
+    "port": 16379,
     "password": "",
-    "db": 1,
+    "db": 2,
     "pool_size": 100
   }
 }

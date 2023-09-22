@@ -13,7 +13,6 @@ type Video struct {
 	FavoriteCount int64     `db:"favorite_count" gorm:"default:0"` // The favorite_count
 	CommentCount  int64     `db:"comment_count" gorm:"default:0"`  // The comment_count
 	CreateAt      time.Time `db:"create_at" gorm:"autoCreateTime"`
-	UpdateAt      time.Time `db:"update_at" gorm:"autoCreateTime"`
 }
 
 type VideoResp struct {

@@ -36,7 +36,7 @@ func (f FavoriteService) FavoriteAction(username, password string, videoId, acti
 func (f FavoriteService) FavoriteList(username, password string) ([]model.VideoResp, error) {
 	//TODO implement me
 	// 1. 根据userId查找favorite表
-	userId, _ := f.FavoriteRepository.FindOneByToken(username, password)
+	userId, _ := f.FavoriteRepository.FindOneByToken(username)
 	favoriteList, err := f.FavoriteRepository.FavoriteFindByUser(userId)
 	if err != nil {
 		return nil, err

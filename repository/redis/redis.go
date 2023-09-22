@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis"
 	"strconv"
+	"time"
 )
 
 type IRedis interface {
@@ -14,10 +15,28 @@ type IRedis interface {
 	FollowList(id int64, relationType string) ([]string, error)
 	IsExist(id int64, id2 int64, keyPrefix string) bool
 	FriendList(id int64) ([]string, error)
+	ZAddMsm(key string, value string, score int64) error
+	ZRangeByScore(key string, score string) ([]redis.Z, error)
 }
 
 type Redis struct {
 	rdb *redis.Client
+}
+
+func (r Redis) ZRangeByScore(key string, score string) ([]redis.Z, error) {
+	//TODO implement me
+	max := strconv.Itoa(int(time.Now().Unix()))
+	msgs, err := r.rdb.ZRangeByScoreWithScores(key, redis.ZRangeBy{
+		Min: score,
+		Max: max,
+	}).Result()
+	return msgs, err
+}
+
+func (r Redis) ZAddMsm(key string, value string, score int64) error {
+	//TODO implement me
+	err := r.rdb.ZAdd(key, redis.Z{float64(score), value}).Err()
+	return err
 }
 
 func (r Redis) FriendList(id int64) ([]string, error) {
@@ -92,7 +111,7 @@ func (r Redis) HSetFavorite(key string, value int64) error {
 
 func (r Redis) Exist(key string) bool {
 	//TODO implement me
-	return r.rdb.Exists(key).Val() < 1
+	return r.rdb.Exists(key).Val() >= 1
 }
 
 func NewRedis(rdb *redis.Client) IRedis {

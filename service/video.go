@@ -29,7 +29,7 @@ func (v VideoService) Feed(username, password string) ([]model.VideoResp, error)
 	//fmt.Println("VideoService", videoList)
 	var videoListResp []model.VideoResp
 	//fmt.Println(username, password)
-	userId, _ := v.videoRepository.FindOneByToken(username, password)
+	userId, _ := v.videoRepository.FindOneByToken(username)
 	//fmt.Println("Feed service", user)
 	for _, video := range videoList {
 		author, _ := v.videoRepository.FindOne(video.Author)
@@ -77,7 +77,7 @@ func (v VideoService) Feed(username, password string) ([]model.VideoResp, error)
 
 func (v VideoService) PublishList(username, password string) ([]model.VideoResp, error) {
 	//TODO implement me
-	userId, _ := v.videoRepository.FindOneByToken(username, password)
+	userId, _ := v.videoRepository.FindOneByToken(username)
 	videoList, err := v.videoRepository.FindAllByAuthor(userId)
 	//fmt.Println(user)
 	var videoListResp []model.VideoResp
@@ -116,7 +116,7 @@ func (v VideoService) Publish(title, author, password string, data []byte) error
 	// 修改作者work_count
 	// 插入video表
 	// 上传到oss
-	userId, _ := v.videoRepository.FindOneByToken(author, password)
+	userId, _ := v.videoRepository.FindOneByToken(author)
 	user, _ := v.videoRepository.FindOne(userId)
 	video := model.Video{
 		Author: userId,
