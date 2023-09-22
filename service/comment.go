@@ -28,9 +28,13 @@ func (c CommentService) CommentList(videoId int64) ([]model.CommentResp, error) 
 	var commentListResp []model.CommentResp
 	for _, comment := range commentList {
 		user, _ := c.CommentRepository.FindOne(comment.UserId)
+		userResp := model.UserResp{
+			Id:   user.Id,
+			Name: user.Name,
+		}
 		commentResp := model.CommentResp{
 			Id:         comment.Id,
-			User:       *user,
+			User:       userResp,
 			Content:    comment.Contents,
 			CreateDate: comment.CreateAt.String(),
 		}
@@ -62,7 +66,7 @@ func (c CommentService) CommentAction(args *CommentActionArgs, username, passwor
 	switch actionType {
 	case 1:
 		// 发布评论
-		userId, _ := c.CommentRepository.FindOneByToken(username, password)
+		userId, _ := c.CommentRepository.FindOneByToken(username)
 		commentInstance := model.Comment{
 			UserId:   userId,
 			VideoId:  videoId,

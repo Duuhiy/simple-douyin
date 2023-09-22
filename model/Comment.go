@@ -14,8 +14,8 @@ type Comment struct {
 }
 
 type CommentResp struct {
-	Id         int64  `json:"id"`
-	User       User   `json:"user"`
-	Content    string `json:"content"`
-	CreateDate string `json:"create_date"`
+	Id         int64    `json:"id"`
+	User       UserResp `json:"user"`
+	Content    string   `json:"content"`
+	CreateDate string   `json:"create_date"`
 }
