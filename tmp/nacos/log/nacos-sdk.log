@@ -1,0 +1,47 @@
+2023-09-21T19:08:50.385+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>
+2023-09-21T19:08:50.435+0800	[31mERROR[0m	nacos_server/nacos_server.go:199	api</v1/cs/configs>,method:<GET>, params:<{"dataId":"simple-douyin.json","group":"douyin","tenant":"0a097d71-984a-4002-a4da-18922d5a68b2"}>, call domain error:<[404] config data not exist
+> , result:<config data not exist
+>
+2023-09-21T19:08:50.443+0800	[31mERROR[0m	nacos_server/nacos_server.go:199	api</v1/cs/configs>,method:<GET>, params:<{"dataId":"simple-douyin.json","group":"douyin","tenant":"0a097d71-984a-4002-a4da-18922d5a68b2"}>, call domain error:<[404] config data not exist
+> , result:<config data not exist
+>
+2023-09-21T19:08:50.457+0800	[31mERROR[0m	nacos_server/nacos_server.go:199	api</v1/cs/configs>,method:<GET>, params:<{"dataId":"simple-douyin.json","group":"douyin","tenant":"0a097d71-984a-4002-a4da-18922d5a68b2"}>, call domain error:<[404] config data not exist
+> , result:<config data not exist
+>
+2023-09-21T19:08:50.457+0800	[31mERROR[0m	config_client/config_client.go:202	get config from server error:[404] config data not exist
+ 
+2023-09-21T19:08:50.457+0800	[33mWARN[0m	config_client/config_client.go:207	[client.GetConfig] config not found, dataId: simple-douyin.json, group: douyin, namespaceId: 0a097d71-984a-4002-a4da-18922d5a68b2.
+2023-09-21T19:10:53.041+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>
+2023-09-21T19:10:53.061+0800	[31mERROR[0m	nacos_server/nacos_server.go:199	api</v1/cs/configs>,method:<GET>, params:<{"dataId":"simple-douyin.json","group":"douyin","tenant":"0a097d71-984a-4002-a4da-18922d5a68b2"}>, call domain error:<[404] config data not exist
+> , result:<config data not exist
+>
+2023-09-21T19:10:53.069+0800	[31mERROR[0m	nacos_server/nacos_server.go:199	api</v1/cs/configs>,method:<GET>, params:<{"dataId":"simple-douyin.json","group":"douyin","tenant":"0a097d71-984a-4002-a4da-18922d5a68b2"}>, call domain error:<[404] config data not exist
+> , result:<config data not exist
+>
+2023-09-21T19:10:53.075+0800	[31mERROR[0m	nacos_server/nacos_server.go:199	api</v1/cs/configs>,method:<GET>, params:<{"dataId":"simple-douyin.json","group":"douyin","tenant":"0a097d71-984a-4002-a4da-18922d5a68b2"}>, call domain error:<[404] config data not exist
+> , result:<config data not exist
+>
+2023-09-21T19:10:53.075+0800	[31mERROR[0m	config_client/config_client.go:202	get config from server error:[404] config data not exist
+ 
+2023-09-21T19:10:53.076+0800	[33mWARN[0m	config_client/config_client.go:207	[client.GetConfig] config not found, dataId: simple-douyin.json, group: douyin, namespaceId: 0a097d71-984a-4002-a4da-18922d5a68b2.
+2023-09-21T19:12:02.152+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>
+2023-09-21T19:12:02.185+0800	[31mERROR[0m	nacos_server/nacos_server.go:199	api</v1/cs/configs>,method:<GET>, params:<{"dataId":"simple-douyin.json","group":"douyin","tenant":"0a097d71-984a-4002-a4da-18922d5a68b2"}>, call domain error:<[404] config data not exist
+> , result:<config data not exist
+>
+2023-09-21T19:12:02.196+0800	[31mERROR[0m	nacos_server/nacos_server.go:199	api</v1/cs/configs>,method:<GET>, params:<{"dataId":"simple-douyin.json","group":"douyin","tenant":"0a097d71-984a-4002-a4da-18922d5a68b2"}>, call domain error:<[404] config data not exist
+> , result:<config data not exist
+>
+2023-09-21T19:12:02.205+0800	[31mERROR[0m	nacos_server/nacos_server.go:199	api</v1/cs/configs>,method:<GET>, params:<{"dataId":"simple-douyin.json","group":"douyin","tenant":"0a097d71-984a-4002-a4da-18922d5a68b2"}>, call domain error:<[404] config data not exist
+> , result:<config data not exist
+>
+2023-09-21T19:12:02.205+0800	[31mERROR[0m	config_client/config_client.go:202	get config from server error:[404] config data not exist
+ 
+2023-09-21T19:12:02.206+0800	[33mWARN[0m	config_client/config_client.go:207	[client.GetConfig] config not found, dataId: simple-douyin.json, group: douyin, namespaceId: 0a097d71-984a-4002-a4da-18922d5a68b2.
+2023-09-21T19:14:40.015+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>
+2023-09-21T19:16:09.868+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>
+2023-09-21T19:19:32.852+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>
+2023-09-21T19:20:02.907+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>
+2023-09-21T19:25:03.179+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>
+2023-09-21T19:25:30.069+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>
+2023-09-21T19:28:15.884+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>
+2023-09-21T19:34:56.051+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>

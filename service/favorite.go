@@ -36,8 +36,8 @@ func (f FavoriteService) FavoriteAction(username, password string, videoId, acti
 func (f FavoriteService) FavoriteList(username, password string) ([]model.VideoResp, error) {
 	//TODO implement me
 	// 1. 根据userId查找favorite表
-	user, _ := f.FavoriteRepository.FindOneByToken(username, password)
-	favoriteList, err := f.FavoriteRepository.FavoriteFindByUser(user.Id)
+	userId, _ := f.FavoriteRepository.FindOneByToken(username, password)
+	favoriteList, err := f.FavoriteRepository.FavoriteFindByUser(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (f FavoriteService) FavoriteList(username, password string) ([]model.VideoR
 			return nil, err
 		}
 		author, _ := f.FavoriteRepository.FindOne(video.Author)
-		isFollow := f.FavotiteRedis.IsExist(user.Id, author.Id, "follow:")
+		isFollow := f.FavotiteRedis.IsExist(userId, author.Id, "follow:")
 		userResp := model.UserResp{
 			Id:              author.Id,
 			Name:            author.Name,
@@ -90,7 +90,7 @@ func (f FavoriteService) FavoriteList(username, password string) ([]model.VideoR
 		}
 		for _, video := range videoList {
 			author, _ := f.FavoriteRepository.FindOne(video.Author)
-			isFollow := f.FavotiteRedis.IsExist(user.Id, author.Id, "follow:")
+			isFollow := f.FavotiteRedis.IsExist(userId, author.Id, "follow:")
 			userResp := model.UserResp{
 				Id:              author.Id,
 				Name:            author.Name,

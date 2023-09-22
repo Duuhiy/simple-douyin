@@ -29,12 +29,12 @@ func (v VideoService) Feed(username, password string) ([]model.VideoResp, error)
 	//fmt.Println("VideoService", videoList)
 	var videoListResp []model.VideoResp
 	//fmt.Println(username, password)
-	user, _ := v.videoRepository.FindOneByToken(username, password)
+	userId, _ := v.videoRepository.FindOneByToken(username, password)
 	//fmt.Println("Feed service", user)
 	for _, video := range videoList {
 		author, _ := v.videoRepository.FindOne(video.Author)
 		//fmt.Println("Feed service: ", author)
-		isFollow := v.videoRedis.IsExist(user.Id, author.Id, "follow:")
+		isFollow := v.videoRedis.IsExist(userId, author.Id, "follow:")
 		//fmt.Println(video.Title, isFollow)
 		userResp := model.UserResp{
 			Id:              author.Id,
@@ -77,8 +77,8 @@ func (v VideoService) Feed(username, password string) ([]model.VideoResp, error)
 
 func (v VideoService) PublishList(username, password string) ([]model.VideoResp, error) {
 	//TODO implement me
-	user, _ := v.videoRepository.FindOneByToken(username, password)
-	videoList, err := v.videoRepository.FindAllByAuthor(user.Id)
+	userId, _ := v.videoRepository.FindOneByToken(username, password)
+	videoList, err := v.videoRepository.FindAllByAuthor(userId)
 	//fmt.Println(user)
 	var videoListResp []model.VideoResp
 	for _, video := range videoList {
@@ -116,9 +116,10 @@ func (v VideoService) Publish(title, author, password string, data []byte) error
 	// 修改作者work_count
 	// 插入video表
 	// 上传到oss
-	user, _ := v.videoRepository.FindOneByToken(author, password)
+	userId, _ := v.videoRepository.FindOneByToken(author, password)
+	user, _ := v.videoRepository.FindOne(userId)
 	video := model.Video{
-		Author: user.Id,
+		Author: userId,
 		Title:  title,
 	}
 

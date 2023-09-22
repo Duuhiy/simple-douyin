@@ -62,9 +62,9 @@ func (c CommentService) CommentAction(args *CommentActionArgs, username, passwor
 	switch actionType {
 	case 1:
 		// 发布评论
-		user, _ := c.CommentRepository.FindOneByToken(username, password)
+		userId, _ := c.CommentRepository.FindOneByToken(username, password)
 		commentInstance := model.Comment{
-			UserId:   user.Id,
+			UserId:   userId,
 			VideoId:  videoId,
 			Contents: args.CommentText,
 		}

@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/repository/mysql"
+	"github.com/RaymondCode/simple-demo/utils"
 	"log"
 )
 
@@ -38,12 +39,13 @@ func (u *UserService) User(id int64) (*model.UserResp, error) {
 }
 
 func (u *UserService) Login(username string, password string) (int64, error) {
-	user, err := u.UserRepository.FindOneByToken(username, password)
-	//fmt.Println(user)
+	pwd := utils.PwdEncode(password)
+	userId, err := u.UserRepository.FindOneByToken(username, pwd)
 	if err != nil {
 		return -1, err
 	}
-	return user.Id, nil
+	//fmt.Println(user)
+	return userId, nil
 }
 
 func NewUserService(repository mysql.IUserRepository) IUserService {

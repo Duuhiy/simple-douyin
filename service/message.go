@@ -22,10 +22,10 @@ type MessageService struct {
 func (m *MessageService) MessageAction(username, password, content string, toUserId int64) error {
 	//TODO implement me
 	// 把消息插入数据库
-	user, _ := m.db.FindOneByToken(username, password)
+	userId, _ := m.db.FindOneByToken(username, password)
 	message := model.Message{
 		ToUserId:   toUserId,
-		FromUserId: user.Id,
+		FromUserId: userId,
 		Content:    content,
 		CreateAt:   time.Now(),
 	}
@@ -36,9 +36,9 @@ func (m *MessageService) MessageAction(username, password, content string, toUse
 func (m *MessageService) MessageChat(username, password string, toUserId int64) ([]model.MessageResp, error) {
 	//TODO implement me
 	//log.Println("MessageChat")
-	user, _ := m.db.FindOneByToken(username, password)
+	userId, _ := m.db.FindOneByToken(username, password)
 	//fmt.Println(user)
-	msgs, err := m.db.MessageFindByUserToUser(user.Id, toUserId)
+	msgs, err := m.db.MessageFindByUserToUser(userId, toUserId)
 	var msgResp []model.MessageResp
 	for _, msg := range msgs {
 		//fmt.Println(msg.CreateAt)

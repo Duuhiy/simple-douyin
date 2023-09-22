@@ -1,0 +1,16 @@
+{
+  "mysql": {
+    "host": "192.168.245.129",
+    "port": 13306,
+    "user": "root",
+    "password": "123456",
+    "dbname": "douyin"
+  },
+  "redis": {
+    "host": "192.168.245.129",
+    "port": 6379,
+    "password": "",
+    "db": 1,
+    "pool_size": 100
+  }
+}

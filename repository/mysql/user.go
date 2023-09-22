@@ -10,7 +10,7 @@ import (
 type IUserRepository interface {
 	Insert(data *model.User) (*model.User, error)
 	FindOne(id int64) (*model.User, error)
-	FindOneByToken(name string, password string) (*model.User, error)
+	FindOneByToken(name string, password string) (int64, error)
 	Update(data *model.User) error
 	Delete(id int64) error
 
@@ -89,13 +89,14 @@ func (u *UserRepository) FindOne(id int64) (*model.User, error) {
 	return &user, err
 }
 
-func (u *UserRepository) FindOneByToken(name string, password string) (*model.User, error) {
+func (u *UserRepository) FindOneByToken(name string, password string) (int64, error) {
 	//TODO implement me
-	var user model.User
-	err := u.db.Where("name=? and password=?", name, password).Find(&user).Error
+	var userId int64 = -1
+	q := fmt.Sprintf("select id, password from %s where name = ? and password = ?", "user")
+	err := u.db.Raw(q, name, password).Scan(&userId).Error
 	//fmt.Println(user)
 	//log.Println(err)
-	return &user, err
+	return userId, err
 }
 
 func (u *UserRepository) Update(data *model.User) error {

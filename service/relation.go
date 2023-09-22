@@ -21,14 +21,14 @@ type RelationService struct {
 
 func (r *RelationService) FollowList(username string, password, relationType string) ([]model.UserResp, error) {
 	//TODO implement me
-	user, _ := r.db.FindOneByToken(username, password)
+	userId, _ := r.db.FindOneByToken(username, password)
 	//fmt.Println(user)
 	var userList []string
 	var err error
 	if relationType == "friend" {
-		userList, err = r.rdb.FriendList(user.Id)
+		userList, err = r.rdb.FriendList(userId)
 	} else {
-		userList, err = r.rdb.FollowList(user.Id, relationType)
+		userList, err = r.rdb.FollowList(userId, relationType)
 	}
 	if err != nil {
 		log.Println("FollowList service 出错了", err)
@@ -81,7 +81,8 @@ func (r *RelationService) FollowList(username string, password, relationType str
 
 func (r *RelationService) RelationAction(toUserId, actionType int64, username, password string) error {
 	//TODO implement me
-	user, _ := r.db.FindOneByToken(username, password)
+	userId, _ := r.db.FindOneByToken(username, password)
+	user, _ := r.db.FindOne(userId)
 	toUser, _ := r.db.FindOne(toUserId)
 	switch actionType {
 	case 1:
@@ -90,7 +91,7 @@ func (r *RelationService) RelationAction(toUserId, actionType int64, username, p
 		// 2.toUserId follower_count++
 		// 3.插入relation表中
 		follow := model.Relation{
-			UserId:   user.Id,
+			UserId:   userId,
 			ToUserId: toUserId,
 		}
 		err := r.db.RelationAdd(user, toUser, &follow)
@@ -98,7 +99,7 @@ func (r *RelationService) RelationAction(toUserId, actionType int64, username, p
 			return err
 		}
 		// redis为每个用户维护两个集合，粉丝集合、关注者集合
-		err = r.rdb.FollowAdd(user.Id, toUserId)
+		err = r.rdb.FollowAdd(userId, toUserId)
 		if err != nil {
 			return err
 		}
@@ -107,7 +108,7 @@ func (r *RelationService) RelationAction(toUserId, actionType int64, username, p
 		if err != nil {
 			return err
 		}
-		err = r.rdb.FollowRemove(user.Id, toUserId)
+		err = r.rdb.FollowRemove(userId, toUserId)
 		if err != nil {
 			return err
 		}
