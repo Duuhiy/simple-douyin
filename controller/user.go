@@ -1,12 +1,15 @@
 package controller
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/RaymondCode/simple-demo/form"
+	"github.com/RaymondCode/simple-demo/global"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/service"
 	"github.com/RaymondCode/simple-demo/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
 	"log"
 	"net/http"
@@ -102,9 +105,17 @@ func (u *UserController) Login(c *gin.Context) {
 	var loginForm form.Login
 	err := c.ShouldBind(&loginForm)
 	if err != nil {
-		zap.L().Debug("Login controller 用户名或密码格式错误")
+		err, ok := err.(validator.ValidationErrors)
+		if !ok {
+			c.JSON(http.StatusOK, UserLoginResponse{
+				Response: Response{StatusCode: 1, StatusMsg: "用户名或密码错误"},
+			})
+		}
+		zap.L().Debug("Login controller 用户名或密码格式错误" + err.Error())
+		dataType, _ := json.Marshal(err.Translate(global.Trans))
+		errString := string(dataType)
 		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "用户名或密码格式错误"},
+			Response: Response{StatusCode: 1, StatusMsg: errString},
 		})
 	}
 	userId, err := u.userService.Login(loginForm.Username, loginForm.Password)
