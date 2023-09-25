@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/repository/mysql"
@@ -23,7 +24,7 @@ type MessageService struct {
 
 func (m *MessageService) MessageAction(username, password, content string, toUserId int64) error {
 	//TODO implement me
-	// 把消息插入数据库
+	// 把消息插入redis
 	userId, _ := m.db.FindOneByToken(username)
 	key := fmt.Sprintf("room:%d:%d", userId, toUserId)
 	value := fmt.Sprintf("%d$%s", userId, content)
@@ -32,6 +33,18 @@ func (m *MessageService) MessageAction(username, password, content string, toUse
 		key = fmt.Sprintf("room:%d:%d", toUserId, userId)
 		err = m.rdb.ZAddMsm(key, value, time.Now().Unix())
 	}
+	// 异步同步到数据库
+	go func() {
+		var err error = errors.New("first")
+		for err != nil {
+			msg := model.Message{
+				FromUserId: userId,
+				ToUserId:   toUserId,
+				Content:    content,
+			}
+			err = m.db.MessageInsert(&msg)
+		}
+	}()
 	//message := model.Message{
 	//	ToUserId:   toUserId,
 	//	FromUserId: userId,

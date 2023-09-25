@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"github.com/RaymondCode/simple-demo/form"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/service"
 	"github.com/RaymondCode/simple-demo/utils"
@@ -60,6 +61,7 @@ type UserRegisterResponse struct {
 
 func (u *UserController) Register(c *gin.Context) {
 	// 1.解析参数
+	zap.L().Info("Register controller")
 	username := c.Query("username")
 	rawpassword := c.Query("password")
 	password := utils.PwdEncode(rawpassword)
@@ -67,7 +69,7 @@ func (u *UserController) Register(c *gin.Context) {
 	userId, err := u.userService.Register(username, password)
 	if userId <= 0 || err != nil {
 		//zap.L().Info(err.Error())
-		fmt.Println("Register controller", err)
+		zap.L().Info("Register controller" + err.Error())
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "User already exist"},
 		})
@@ -88,24 +90,31 @@ func (u *UserController) Register(c *gin.Context) {
 }
 
 func (u *UserController) Login(c *gin.Context) {
-	username := c.Query("username")
-	password := c.Query("password")
-	if username == "" || password == "" {
-		zap.L().Debug("Login controller 用户名和密码不能为空")
+	//username := c.Query("username")
+	//password := c.Query("password")
+	//zap.L().Info("Login controller" + username + "-" + password)
+	//if username == "" || password == "" {
+	//	zap.L().Debug("Login controller 用户名和密码不能为空")
+	//	c.JSON(http.StatusOK, UserLoginResponse{
+	//		Response: Response{StatusCode: 1, StatusMsg: "用户名和密码不能为空"},
+	//	})
+	//}
+	var loginForm form.Login
+	err := c.ShouldBind(&loginForm)
+	if err != nil {
+		zap.L().Debug("Login controller 用户名或密码格式错误")
 		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "用户名和密码不能为空"},
+			Response: Response{StatusCode: 1, StatusMsg: "用户名或密码格式错误"},
 		})
 	}
-	//fmt.Println("Login controller", username, pwd)
-	//fmt.Println(username, password)
-	userId, err := u.userService.Login(username, password)
+	userId, err := u.userService.Login(loginForm.Username, loginForm.Password)
 	fmt.Println("Login", userId)
 	if userId <= 0 || err != nil {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
 		})
 	} else {
-		token, err := utils.GenToken(username, password)
+		token, err := utils.GenToken(loginForm.Username, loginForm.Password)
 		if err != nil {
 			log.Println("GenToken 出错了", err)
 			c.JSON(http.StatusOK, UserLoginResponse{

@@ -22,7 +22,6 @@ func main() {
 	logger, _ := zap.NewDevelopment()
 	zap.ReplaceGlobals(logger)
 	defer logger.Sync()
-
 	// viper读取nacos配置
 	v := viper.New()
 	v.SetConfigFile("config/config.yaml")
@@ -96,6 +95,5 @@ func main() {
 	})
 
 	initRouter(r, db, rdb)
-
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
