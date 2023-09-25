@@ -14,7 +14,10 @@ import (
 	gmysql "gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
+	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 )
 
 func main() {
@@ -95,5 +98,15 @@ func main() {
 	})
 
 	initRouter(r, db, rdb)
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	go func() {
+		err := r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+		if err != nil {
+
+		}
+	}()
+	quit := make(chan os.Signal)
+	// SIGINT ctrl + c	SIGTERM kill不加任何参数
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	// 接收到退出信号，处理后续逻辑
 }
