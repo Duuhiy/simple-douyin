@@ -12,5 +12,12 @@
     "password": "",
     "db": 2,
     "pool_size": 100
-  }
+  },
+  "consul": {
+    "host": "192.168.245.129",
+    "port": 8500
+  },
+  "name": "douyin",
+  "host": "113.54.219.34",
+  "port": 8080
 }

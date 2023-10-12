@@ -96,3 +96,7 @@
 2023-09-23T11:23:58.629+0800	[31mERROR[0m	config_client/config_client.go:202	get config from server error:Get "http://192.168.245.129:8848/nacos/v1/cs/configs?dataId=simple-douyin&group=douyin&tenant=0a097d71-984a-4002-a4da-18922d5a68b2": dial tcp 192.168.245.129:8848: connectex: No connection could be made because the target machine actively refused it. 
 2023-09-23T11:25:44.624+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>
 2023-09-23T11:26:32.099+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>
+2023-09-25T21:31:32.069+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>
+2023-09-25T21:32:30.259+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>
+2023-09-25T21:34:06.983+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>
+2023-09-25T21:38:28.705+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>

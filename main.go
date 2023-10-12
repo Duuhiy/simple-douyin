@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/RaymondCode/simple-demo/config"
+	"github.com/RaymondCode/simple-demo/utils/register"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
 	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
+	uuid "github.com/satori/go.uuid"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	gmysql "gorm.io/driver/mysql"
@@ -98,6 +100,14 @@ func main() {
 	})
 
 	initRouter(r, db, rdb)
+
+	// 注册到consul
+	registerClient := register.NewRegistry(cfg.ConsulInfo.Host, cfg.ConsulInfo.Port)
+	serviceId := fmt.Sprintf("%s", uuid.NewV4())
+	err = registerClient.Register(cfg.Host, cfg.Port, cfg.Name, cfg.Tags, serviceId)
+	if err != nil {
+		zap.S().Panic("服务注册失败:", err.Error())
+	}
 	go func() {
 		err := r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 		if err != nil {

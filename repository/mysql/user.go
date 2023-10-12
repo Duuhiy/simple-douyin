@@ -23,7 +23,7 @@ type IUserRepository interface {
 	VideoDelete(id int64) error
 	Publish(video *model.Video, author *model.User, data []byte) error
 	FindAllByAuthor(userId int64) ([]model.Video, error)
-	VideoFindByIdList(list string) ([]model.Video, error)
+	VideoFindByIdList(list []int64) ([]model.Video, error)
 
 	FavoriteInsert(data *model.Favorite) (sql.Result, error)
 	FavoriteFindOne(id int64) (*model.Favorite, error)

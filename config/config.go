@@ -14,8 +14,13 @@ type RedisConfig struct {
 	Host     string `mapstructure:"host" json:"host"`
 	Port     int    `mapstructure:"port" json:"port"`
 	Password string `mapstructure:"password" json:"password"`
-	DB       int    `json:"db"`
-	PoolSize int    `json:"pool_size"`
+	DB       int    `mapstructure:"db" json:"db"`
+	PoolSize int    `mapstructure:"db" json:"pool_size"`
+}
+
+type ConsulConfig struct {
+	Host string `mapstructure:"host" json:"host"`
+	Port int    `mapstructure:"port" json:"port"`
 }
 
 type MySQLConfig struct {
@@ -27,6 +32,11 @@ type MySQLConfig struct {
 }
 
 type DouyinConfig struct {
-	Rdb RedisConfig `json:"redis"`
-	Db  MySQLConfig `json:"mysql"`
+	Name       string       `mapstructure:"name" json:"name"`
+	Host       string       `mapstructure:"host" json:"host"`
+	Tags       []string     `mapstructure:"tags" json:"tags"`
+	Port       int          `mapstructure:"port" json:"port"`
+	Rdb        RedisConfig  `json:"redis" mapstructure:"redis"`
+	Db         MySQLConfig  `json:"mysql" mapstructure:"mysql"`
+	ConsulInfo ConsulConfig `json:"consul" mapstructure:"consul"`
 }
